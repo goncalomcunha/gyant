@@ -1,0 +1,27 @@
+version: '3.3'
+services:
+  gyant-app:
+    build: .
+    container_name: gyant-app
+    stdin_open: true
+    tty: true
+    ports:
+      - 8081:3000
+      - 9229:9229
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      gyant-net:
+        ipv4_address: 174.18.0.100
+    command: sh -c "npm run start:debug"
+
+volumes:
+  gyantdata:
+
+networks:
+  gyant-net:
+    ipam:
+      config:
+        - subnet: 174.18.0.0/16
+
