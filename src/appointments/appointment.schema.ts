@@ -10,6 +10,9 @@ export class Appointment {
   appointmentId: string;
 
   @Prop()
+  status: string;
+
+  @Prop()
   slot: Slot;
 
   constructor(partialData?: Partial<Appointment>) {

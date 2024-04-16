@@ -6,12 +6,13 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { faker } from '@faker-js/faker';
 import { Connection } from 'mongoose';
 import { getConnectionToken } from '@nestjs/mongoose';
-import { Factory } from './utils/factory';
 import { Appointment } from '../src/appointments/appointment.schema';
+import { Factory } from './utils/factory';
 
 describe('Appointments', () => {
   let app: INestApplication;
   let connection: Connection;
+  let factory: Factory;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -22,13 +23,14 @@ describe('Appointments', () => {
     await app.init();
 
     connection = await moduleFixture.get(getConnectionToken());
+    factory = new Factory(connection);
   });
 
   afterEach(async () => {
     await app.close();
   });
 
-  it('allows to start the appointment prebooking process', async () => {
+  it('should start the appointment prebooking process', async () => {
     const slotId = faker.string.uuid();
     const response = await request(app.getHttpServer())
       .post('/api/v1/appointments')
@@ -44,5 +46,23 @@ describe('Appointments', () => {
     expect(persistedAppointment).toBeTruthy();
     expect(persistedAppointment.appointmentId).toBe(appointment.appointmentId);
     expect(persistedAppointment.slot.status).toBe('reserved');
+  });
+
+  it('should receive the webhook from the external providers', async () => {
+    const appointment = await factory.createAppointment({
+      status: 'waiting_confirmation',
+    });
+    const appointmentId = appointment.appointmentId;
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/appointments-webhooks/status')
+      .set('content-type', 'application/json')
+      .send({ appointmentId: appointmentId, status: 'confirmed' });
+
+    const persistedAppointment = await connection.db
+      .collection('appointments')
+      .findOne<Appointment>({ appointmentId });
+    expect(response.statusCode).toBe(202);
+    expect(persistedAppointment.status).toBe('confirmed');
+    expect(persistedAppointment.slot.status).toBe('taken');
   });
 });
