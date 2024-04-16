@@ -4,10 +4,11 @@ import { Appointment, AppointmentSchema } from './appointment.schema';
 import { AppointmentsController } from './appointments.controller';
 import { AppointmentsService } from './appointments.service';
 import { AppointmentWebhooksController } from './webhooks.controller';
+import { AppointmentsProducer } from './appointments.producer';
 
 @Module({
   controllers: [AppointmentsController, AppointmentWebhooksController],
-  providers: [AppointmentsService],
+  providers: [AppointmentsService, AppointmentsProducer],
   imports: [
     MongooseModule.forFeature([
       { name: Appointment.name, schema: AppointmentSchema },

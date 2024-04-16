@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "address": "174.18.0.102",
+      "localRoot": "${workspaceFolder}",
+      "name": "Attach to Docker",
+      "port": 9229,
+      "remoteRoot": "/app",
+      "request": "attach",
+      "restart": true,
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    }
+  ]
+}

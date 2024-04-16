@@ -6,6 +6,7 @@ import { ExternalProvidersModule } from './external-providers/external-providers
 import { PatientsModule } from './patients/patients.module';
 import { SlotsModule } from './slots/slots.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { IntegrationsModule } from './integrations/integrations.module';
 
 @Module({
   imports: [
@@ -25,10 +26,11 @@ import { AppointmentsModule } from './appointments/appointments.module';
     }),
 
     AppointmentsModule,
+    ExternalProvidersModule,
+    IntegrationsModule,
     ProvidersModule,
     PatientsModule,
     SlotsModule,
-    ExternalProvidersModule,
   ],
 })
 export class AppModule {}

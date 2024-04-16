@@ -4,12 +4,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Appointment } from './appointment.schema';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { AppointmentStatusUpdateDto } from './dto/appointment-status-update.dto';
+import { AppointmentsProducer } from './appointments.producer';
 
 @Injectable()
 export class AppointmentsService {
   constructor(
     @InjectModel(Appointment.name)
     private readonly appointmentModel: Model<Appointment>,
+    private readonly appointmentsProducer: AppointmentsProducer,
   ) {}
 
   async find(): Promise<Appointment[]> {
@@ -19,7 +21,7 @@ export class AppointmentsService {
   async create(params: CreateAppointmentDto): Promise<Appointment> {
     // TODO: validate if slot is still available
 
-    const appointment = new Appointment({
+    const created = await this.appointmentModel.create({
       appointmentId: 'asdas',
       slot: {
         code: params.slotId,
@@ -28,7 +30,11 @@ export class AppointmentsService {
       },
     });
 
-    return await this.appointmentModel.create(appointment);
+    this.appointmentsProducer
+      .enqueuePrebooking(created)
+      .catch((err) => console.log(err));
+
+    return created;
   }
 
   async statusUpdate(params: AppointmentStatusUpdateDto) {

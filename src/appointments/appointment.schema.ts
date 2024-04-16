@@ -14,12 +14,6 @@ export class Appointment {
 
   @Prop()
   slot: Slot;
-
-  constructor(partialData?: Partial<Appointment>) {
-    if (partialData) {
-      Object.assign(this, partialData);
-    }
-  }
 }
 
 export const AppointmentSchema = SchemaFactory.createForClass(Appointment);
