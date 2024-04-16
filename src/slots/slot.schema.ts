@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { Provider } from '../providers/provider.schema';
 
 export type SlotDocument = HydratedDocument<Slot>;
 
@@ -13,6 +14,9 @@ export class Slot {
 
   @Prop()
   startsAt: Date;
+
+  @Prop()
+  provider: Provider;
 }
 
 export const SlotSchema = SchemaFactory.createForClass(Slot);

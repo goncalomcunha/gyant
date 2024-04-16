@@ -19,7 +19,15 @@ describe('Integrations', () => {
   it('should contact the adapter to create the prebooking', async () => {
     const response = await request(app.getHttpServer())
       .post('/api/v1/integrations/appointments')
-      .set('content-type', 'application/json');
+      .set('content-type', 'application/json')
+      .send({
+        appointmentId: 'fake',
+        slot: {
+          provider: {
+            name: 'adapter1',
+          },
+        },
+      });
 
     expect(response.statusCode).toBe(201);
   });

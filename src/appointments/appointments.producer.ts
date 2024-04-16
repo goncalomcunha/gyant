@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
+import { Appointment } from './appointment.schema';
 
 @Injectable()
 export class AppointmentsProducer {
@@ -17,10 +18,10 @@ export class AppointmentsProducer {
     });
   }
 
-  async enqueuePrebooking(data: any) {
+  async enqueuePrebooking(appointment: Appointment) {
     await this.channelWrapper.sendToQueue(
       'prebookings',
-      Buffer.from(JSON.stringify(data)),
+      Buffer.from(JSON.stringify(appointment)),
       { persistent: true },
     );
   }

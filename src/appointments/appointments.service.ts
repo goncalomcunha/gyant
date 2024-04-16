@@ -20,21 +20,27 @@ export class AppointmentsService {
 
   async create(params: CreateAppointmentDto): Promise<Appointment> {
     // TODO: validate if slot is still available
+    const appointmentId = String(Date.now());
 
-    const created = await this.appointmentModel.create({
-      appointmentId: 'asdas',
+    const appointment = new Appointment({
+      appointmentId: appointmentId,
       slot: {
         code: params.slotId,
         startsAt: new Date(),
         status: 'reserved',
+        provider: {
+          name: Number(appointmentId) % 2 === 0 ? 'adapter1' : 'adapter2',
+        },
       },
     });
 
+    const createdAppointment = await this.appointmentModel.create(appointment);
+
     this.appointmentsProducer
-      .enqueuePrebooking(created)
+      .enqueuePrebooking(createdAppointment)
       .catch((err) => console.log(err));
 
-    return created;
+    return createdAppointment;
   }
 
   async statusUpdate(params: AppointmentStatusUpdateDto) {
