@@ -10,6 +10,19 @@ services:
     networks:
       gyant-net:
         ipv4_address: 174.18.0.100
+
+  gyant-rabbitmq:
+    image: rabbitmq:3-management
+    container_name: gyant-rabbitmq
+    ports:
+     - "5672:5672"
+     - "15672:15672"
+    volumes:
+     - rabbitmqdata:/var/lib/rabbitmq
+    networks:
+      gyant-net:
+        ipv4_address: 174.18.0.101
+
   gyant-app:
     build: .
     container_name: gyant-app
@@ -17,6 +30,7 @@ services:
     tty: true
     depends_on:
       - gyant-db
+      - gyant-rabbitmq
     ports:
       - 8081:3000
       - 9229:9229
@@ -25,11 +39,12 @@ services:
       - /app/node_modules
     networks:
       gyant-net:
-        ipv4_address: 174.18.0.101
+        ipv4_address: 174.18.0.102
     command: sh -c "npm run start:debug"
 
 volumes:
   gyantdata:
+  rabbitmqdata:
 
 networks:
   gyant-net:
