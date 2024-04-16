@@ -18,5 +18,6 @@ describe('Providers', () => {
   it('can get the list of all providers', async () => {
     const response = await request(app.getHttpServer()).get('/providers');
     expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual([]);
   });
 });

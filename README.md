@@ -5,21 +5,10 @@ Gyant coding challenge
 ## Running the containers
 
 ```bash
-docker compose up -d
+docker compose up -d gyant-app
 ```
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
+## Automated Tests
 
 ```bash
 # unit tests
@@ -27,7 +16,20 @@ $ npm run test
 
 # e2e tests
 $ npm run test:e2e
+```
 
-# test coverage
-$ npm run test:cov
+## API Documentation
+
+##### Create provider
+
+```bash
+curl -X POST 'http://localhost:8081/providers' \
+  -H 'content-type: application/json' \
+  -d '{}'
+```
+
+##### List providers
+
+```bash
+curl 'http://localhost:8081/providers'
 ```

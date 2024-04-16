@@ -1,10 +1,22 @@
 version: '3.3'
 services:
+  gyant-db:
+    image: mongo
+    container_name: gyant-db
+    volumes:
+      - gyantdata:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      gyant-net:
+        ipv4_address: 174.18.0.100
   gyant-app:
     build: .
     container_name: gyant-app
     stdin_open: true
     tty: true
+    depends_on:
+      - gyant-db
     ports:
       - 8081:3000
       - 9229:9229
@@ -13,7 +25,7 @@ services:
       - /app/node_modules
     networks:
       gyant-net:
-        ipv4_address: 174.18.0.100
+        ipv4_address: 174.18.0.101
     command: sh -c "npm run start:debug"
 
 volumes:
