@@ -1,13 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { faker } from '@faker-js/faker';
 import { Connection } from 'mongoose';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Appointment } from '../src/appointments/appointment.schema';
 import { Factory } from './utils/factory';
+import { fakeAppointmentProducer } from './mocks/mocks';
+import { createTestingApp } from './utils/testing-app';
 
 describe('Appointments', () => {
   let app: INestApplication;
@@ -15,10 +15,7 @@ describe('Appointments', () => {
   let factory: Factory;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
+    const moduleFixture = await createTestingApp().compile();
     app = moduleFixture.createNestApplication<NestExpressApplication>();
     await app.init();
 
@@ -53,6 +50,10 @@ describe('Appointments', () => {
       status: 'waiting_confirmation',
     });
     const appointmentId = appointment.appointmentId;
+    const spy = jest
+      .spyOn(fakeAppointmentProducer, 'enqueuePrebooking')
+      .mockResolvedValue(null);
+
     const response = await request(app.getHttpServer())
       .post('/api/v1/appointments-webhooks/status')
       .set('content-type', 'application/json')
@@ -64,5 +65,6 @@ describe('Appointments', () => {
     expect(response.statusCode).toBe(202);
     expect(persistedAppointment.status).toBe('confirmed');
     expect(persistedAppointment.slot.status).toBe('taken');
+    expect(spy).toHaveBeenCalled();
   });
 });

@@ -1,18 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { faker } from '@faker-js/faker';
+import { createTestingApp } from './utils/testing-app';
 
 describe('External providers', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
+    const moduleFixture = await createTestingApp().compile();
     app = moduleFixture.createNestApplication<NestExpressApplication>();
     await app.init();
   });

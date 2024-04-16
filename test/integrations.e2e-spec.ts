@@ -3,7 +3,7 @@ import * as request from 'supertest';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { createTestingApp } from './utils/testing-app';
 
-describe('Providers', () => {
+describe('Integrations', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -16,18 +16,11 @@ describe('Providers', () => {
     await app.close();
   });
 
-  it('can get the list of all providers', async () => {
-    const response = await request(app.getHttpServer()).get(
-      '/api/v1/providers',
-    );
-    expect(response.statusCode).toBe(200);
-  });
-
-  it('can create a provider', async () => {
+  it('should contact the adapter to create the prebooking', async () => {
     const response = await request(app.getHttpServer())
-      .post('/api/v1/providers')
-      .set('content-type', 'application/json')
-      .send({ foo: 'bar' });
+      .post('/api/v1/integrations/appointments')
+      .set('content-type', 'application/json');
+
     expect(response.statusCode).toBe(201);
   });
 });

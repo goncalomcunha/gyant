@@ -14,20 +14,15 @@ export class IntegrationsConsumer implements OnModuleInit {
   }
 
   public async onModuleInit() {
-    try {
-      await this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {
-        await channel.assertQueue('prebookings', { durable: true });
-        await channel.consume('prebookings', async (message) => {
-          if (message) {
-            const content = JSON.parse(message.content.toString());
-            console.log('Received message:', content);
-            channel.ack(message);
-          }
-        });
+    await this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {
+      await channel.assertQueue('prebookings', { durable: true });
+      await channel.consume('prebookings', async (message) => {
+        if (message) {
+          const content = JSON.parse(message.content.toString());
+          console.log('Received message:', content);
+          channel.ack(message);
+        }
       });
-      console.log('Consumer service started and listening for messages.');
-    } catch (err) {
-      console.error('Error starting the consumer:', err);
-    }
+    });
   }
 }
