@@ -3,8 +3,9 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { faker } from '@faker-js/faker';
 
-describe('Providers', () => {
+describe('External providers', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -20,18 +21,16 @@ describe('Providers', () => {
     await app.close();
   });
 
-  it('can get the list of all providers', async () => {
-    const response = await request(app.getHttpServer()).get(
-      '/api/v1/providers',
-    );
-    expect(response.statusCode).toBe(200);
-  });
-
-  it('can create a provider', async () => {
+  it('allows to request an appointment prebooking', async () => {
     const response = await request(app.getHttpServer())
-      .post('/api/v1/providers')
+      .post('/fake-external-provider/appointment')
       .set('content-type', 'application/json')
-      .send({ foo: 'bar' });
-    expect(response.statusCode).toBe(201);
+      .send({
+        slot_id: faker.string.uuid(),
+        appointmentId: faker.string.uuid(),
+        patientData: { name: faker.person.fullName() },
+      });
+    expect(response.statusCode).toBe(202);
+    expect(response.text).toBe('OK');
   });
 });

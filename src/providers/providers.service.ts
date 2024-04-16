@@ -11,14 +11,12 @@ export class ProvidersService {
   ) {}
 
   async find(): Promise<Provider[]> {
-    return this.providerModel.find().exec();
+    return await this.providerModel.find().sort({ name: 'desc' }).exec();
   }
 
   async create(body: CreateProviderDto): Promise<Provider> {
-    const provider = await this.providerModel.create({
+    return await this.providerModel.create({
       name: body.name,
     });
-
-    return provider;
   }
 }

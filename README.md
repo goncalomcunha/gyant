@@ -2,10 +2,17 @@
 
 Gyant coding challenge
 
-## Running the containers
+## Start the environment
 
 ```bash
 docker compose up -d gyant-app
+```
+
+## Set env files
+
+```bash
+cp .env.template env.development
+cp .env.template env.test
 ```
 
 ## Automated Tests
@@ -18,7 +25,7 @@ $ npm run test
 $ npm run test:e2e
 ```
 
-## API Documentation
+## API
 
 ##### Create provider
 
