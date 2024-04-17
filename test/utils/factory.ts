@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { Patient } from '../../src/patients/patient.schema';
 import { Connection } from 'mongoose';
 import { Appointment } from '../../src/appointments/appointment.schema';
 import { Slot } from '../../src/slots/slot.schema';
@@ -17,7 +16,8 @@ export class Factory {
       faker.helpers.arrayElement([
         'waiting_confirmation',
         'confirmed',
-        'canceled',
+        'cancelled',
+        'finished',
       ]);
     appointment.slot = overrides.slot ?? (await this.createSlot());
 
@@ -37,14 +37,5 @@ export class Factory {
     await this.connection.db.collection('slots').insertOne(slot);
 
     return slot;
-  }
-
-  async createPatient(overrides: Partial<Patient> = {}): Promise<Patient> {
-    const patient = new Patient();
-    patient.name = overrides.name ?? faker.person.fullName();
-
-    await this.connection.db.collection('patients').insertOne(patient);
-
-    return patient;
   }
 }

@@ -26,9 +26,13 @@ export class IntegrationsService {
 
     const { data } = await firstValueFrom(
       this.httpService
-        .post<PrebookingAdapterResponseDto>(adapterUrl, appointment, {
-          headers: { 'Content-Type': 'application/json' },
-        })
+        .post<PrebookingAdapterResponseDto>(
+          adapterUrl,
+          { appointmentId: appointment.appointmentId },
+          {
+            headers: { 'Content-Type': 'application/json' },
+          },
+        )
         .pipe(
           catchError((error: AxiosError) => {
             console.error(error.response.data);
@@ -48,6 +52,7 @@ export class IntegrationsService {
           'Please wait. The healthcare provider is processing the booking.';
         break;
       case 'rejected':
+        // In case the health provider decides to reject immediatelly
         responseData.message = 'Your prebooking was rejected';
         break;
     }

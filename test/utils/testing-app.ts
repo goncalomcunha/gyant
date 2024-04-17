@@ -3,8 +3,8 @@ import { AppModule } from '../../src/app.module';
 import { AppointmentsProducer } from '../../src/appointments/appointments.producer';
 import { IntegrationsConsumer } from '../../src/integrations/integrations.consumer';
 import {
-  fakeAppointmentProducer,
-  fakeIntegrationsConsumer,
+  createFakeAppointmentProducer,
+  createFakeIntegrationsConsumer,
 } from '../mocks/mocks';
 
 export function createTestingApp(): TestingModuleBuilder {
@@ -12,7 +12,7 @@ export function createTestingApp(): TestingModuleBuilder {
     imports: [AppModule],
   })
     .overrideProvider(AppointmentsProducer)
-    .useValue(fakeAppointmentProducer)
+    .useValue(createFakeAppointmentProducer())
     .overrideProvider(IntegrationsConsumer)
-    .useValue(fakeIntegrationsConsumer);
+    .useValue(createFakeIntegrationsConsumer());
 }

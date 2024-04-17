@@ -6,7 +6,6 @@ import { Connection } from 'mongoose';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Appointment } from '../src/appointments/appointment.schema';
 import { Factory } from './utils/factory';
-import { fakeAppointmentProducer } from './mocks/mocks';
 import { createTestingApp } from './utils/testing-app';
 
 describe('Appointments', () => {
@@ -45,14 +44,11 @@ describe('Appointments', () => {
     expect(persistedAppointment.slot.status).toBe('reserved');
   });
 
-  it('should receive the webhook from the external providers', async () => {
+  it('should receive the webhook from the external providers and confirm the appointment', async () => {
     const appointment = await factory.createAppointment({
       status: 'waiting_confirmation',
     });
     const appointmentId = appointment.appointmentId;
-    const spy = jest
-      .spyOn(fakeAppointmentProducer, 'enqueuePrebooking')
-      .mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .post('/api/v1/appointments-webhooks/status')
@@ -65,6 +61,24 @@ describe('Appointments', () => {
     expect(response.statusCode).toBe(202);
     expect(persistedAppointment.status).toBe('confirmed');
     expect(persistedAppointment.slot.status).toBe('taken');
-    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should leave the slot available if the appointment was rejected by the external provider', async () => {
+    const appointment = await factory.createAppointment({
+      status: 'waiting_confirmation',
+    });
+    const appointmentId = appointment.appointmentId;
+
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/appointments-webhooks/status')
+      .set('content-type', 'application/json')
+      .send({ appointmentId: appointmentId, status: 'rejected' });
+
+    const persistedAppointment = await connection.db
+      .collection('appointments')
+      .findOne<Appointment>({ appointmentId });
+    expect(response.statusCode).toBe(202);
+    expect(persistedAppointment.status).toBe('rejected');
+    expect(persistedAppointment.slot.status).toBe('available');
   });
 });

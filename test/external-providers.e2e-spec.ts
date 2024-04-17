@@ -26,6 +26,7 @@ describe('External providers', () => {
         appointmentId: faker.string.uuid(),
         patientData: { name: faker.person.fullName() },
       });
+
     expect(response.statusCode).toBe(202);
     expect(response.text).toBe('OK');
   });
