@@ -24,7 +24,5 @@ $ npm run test:e2e
 
 ```bash
 # Create prebooking, receive webhook 10 seconds later
-curl -X POST 'http://localhost:8081/api/v1/appointments' \
-  -H 'content-type: application/json' \
-   --data-raw '{"slotId": "17ade17b-6530-4621-8635-9951c1ed1c72"}'
+curl -X POST 'http://localhost:8081/api/v1/appointments' -H 'content-type: application/json' --data-raw '{"slotId": "17ade17b-6530-4621-8635-9951c1ed1c72"}'
 ```
