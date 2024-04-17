@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { Appointment } from '../appointments/appointment.schema';
 import { PrebookingIntegrationManagerResponseDto } from './dto/prebooking-integration-manager-response.dto';
 import { PrebookingAdapterResponseDto } from './dto/prebooking-adapter-response.dto';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
 
 @Injectable()
 export class IntegrationsService {
@@ -16,23 +17,24 @@ export class IntegrationsService {
     let adapterUrl: string;
     switch (appointment.slot.provider.name) {
       case 'adapter1':
-        adapterUrl =
-          'http://174.18.0.102:3000/api/v1/adapter1/book-appointment';
+        adapterUrl = 'http://174.18.0.102:3000/api/v1/adapter1/appointments';
         break;
       case 'adapter2':
-        adapterUrl =
-          'http://174.18.0.102:3000/api/v1/adapter2/book-appointment';
+        adapterUrl = 'http://174.18.0.102:3000/api/v1/adapter2/appointments';
         break;
     }
 
     const { data } = await firstValueFrom(
-      this.httpService.post<PrebookingAdapterResponseDto>(
-        adapterUrl,
-        appointment,
-        {
+      this.httpService
+        .post<PrebookingAdapterResponseDto>(adapterUrl, appointment, {
           headers: { 'Content-Type': 'application/json' },
-        },
-      ),
+        })
+        .pipe(
+          catchError((error: AxiosError) => {
+            console.error(error.response.data);
+            throw error.message;
+          }),
+        ),
     );
 
     // No one will be reading this response on the other end,
