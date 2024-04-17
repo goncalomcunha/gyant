@@ -17,6 +17,7 @@ export class Factory {
         'waiting_confirmation',
         'confirmed',
         'cancelled',
+        'rejected',
         'finished',
       ]);
     appointment.slot = overrides.slot ?? (await this.createSlot());

@@ -51,26 +51,30 @@ export class AppointmentsService {
       throw new BadRequestException('Appointment not found');
     }
 
-    let slotNewStatus: string;
     switch (params.status) {
       case 'confirmed':
-        slotNewStatus = 'taken';
+        appointment.slot.status = 'taken';
+        appointment.status = 'confirmed';
         break;
-      default:
-        slotNewStatus = 'available';
+      case 'rejected':
+        appointment.slot.status = 'available';
+        appointment.status = 'rejected';
+        break;
     }
 
     const updated = await this.appointmentModel.updateOne(
       { appointmentId: appointment.appointmentId },
       {
-        status: params.status,
-        'slot.status': slotNewStatus,
+        status: appointment.status,
+        'slot.status': appointment.slot.status,
       },
     );
 
-    this.appointmentsProducer
-      .enqueueConfirmedAppointment(appointment)
-      .catch((err) => console.log(err));
+    if (params.status === 'confirmed') {
+      this.appointmentsProducer
+        .enqueueConfirmedAppointment(appointment)
+        .catch((err) => console.log(err));
+    }
 
     return updated;
   }
