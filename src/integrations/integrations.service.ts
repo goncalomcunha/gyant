@@ -1,8 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { PrebookingResponseDto } from './dto/prebooking-response.dto';
-import { firstValueFrom } from 'rxjs';
 import { Appointment } from '../appointments/appointment.schema';
+import { PrebookingIntegrationManagerResponseDto } from './dto/prebooking-integration-manager-response.dto';
+import { PrebookingAdapterResponseDto } from './dto/prebooking-adapter-response.dto';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class IntegrationsService {
@@ -10,7 +11,7 @@ export class IntegrationsService {
 
   async createPrebooking(
     appointment: Appointment,
-  ): Promise<PrebookingResponseDto> {
+  ): Promise<PrebookingIntegrationManagerResponseDto> {
     // Route the request
     let adapterUrl: string;
     switch (appointment.slot.provider.name) {
@@ -24,12 +25,31 @@ export class IntegrationsService {
         break;
     }
 
-    // const { data } = await firstValueFrom(
-    //   this.httpService.post<PrebookingResponseDto>(adapterUrl, appointment, {
-    //     headers: { 'Content-Type': 'application/json' },
-    //   }),
-    // );
+    const { data } = await firstValueFrom(
+      this.httpService.post<PrebookingAdapterResponseDto>(
+        adapterUrl,
+        appointment,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      ),
+    );
 
-    return 'data' as any;
+    // No one will be reading this response on the other end,
+    // but we'll process the adapter response anyway just for fun.
+    const responseData: PrebookingIntegrationManagerResponseDto = {
+      message: '',
+    };
+    switch (data.status) {
+      case 'waiting_confirmation':
+        responseData.message =
+          'Please wait. The healthcare provider is processing the booking.';
+        break;
+      case 'rejected':
+        responseData.message = 'Your prebooking was rejected';
+        break;
+    }
+
+    return responseData;
   }
 }
