@@ -17,7 +17,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json"
+    "test:e2e:network:create": "docker network create --subnet=174.18.1.0/24 e2e-net",
+    "test:e2e:network:remove": "docker network rm e2e-net",
+    "test:e2e:db:start": "docker run --rm --name e2e-tests-db --net e2e-net --ip 174.18.1.150 -d mongo",
+    "test:e2e:db:stop": "docker container stop e2e-tests-db",
+    "test:e2e:setup": "npm run test:e2e:network:create && npm run test:e2e:db:start && sleep 5",
+    "test:e2e:cleanup": "npm run test:e2e:db:stop; npm run test:e2e:network:remove;",
+    "pretest:e2e": "npm run test:e2e:cleanup; npm run test:e2e:setup",
+    "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json",
+    "posttest:e2e": "npm run test:e2e:cleanup"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",

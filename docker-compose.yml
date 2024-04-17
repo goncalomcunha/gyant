@@ -50,5 +50,5 @@ networks:
   gyant-net:
     ipam:
       config:
-        - subnet: 174.18.0.0/16
+        - subnet: 174.18.0.0/24
 
