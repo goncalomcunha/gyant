@@ -1,8 +1,10 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { AppointmentStatusUpdateDto } from './dto/appointment-status-update.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller()
+@ApiTags('Appointments')
 export class AppointmentWebhooksController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 

@@ -2,8 +2,10 @@ import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { Appointment } from './appointment.schema';
 import { AppointmentsService } from './appointments.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller()
+@ApiTags('Appointments')
 export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 

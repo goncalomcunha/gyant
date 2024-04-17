@@ -1,8 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { IntegrationsService } from './integrations.service';
 import { Appointment } from '../appointments/appointment.schema';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller()
+@ApiTags('Integrations Manager')
 export class IntegrationsController {
   constructor(private readonly integrationsService: IntegrationsService) {}
 

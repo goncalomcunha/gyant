@@ -2,8 +2,10 @@ import { Controller, Get, HttpCode, Post } from '@nestjs/common';
 import { PrebookingAdapterResponseDto } from './dto/prebooking-adapter-response.dto';
 import { ProviderInfoAdapterResponseDto } from './dto/providerinfo-adapter-response.dto';
 import { AvailableSlotsAdapterResponseDto } from './dto/availableslots-adapter-response.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller()
+@ApiTags('Adapters')
 export class Adapter1Controller {
   @Post('/api/v1/adapter1/appointments')
   @HttpCode(202)
