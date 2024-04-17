@@ -40,7 +40,7 @@ services:
     networks:
       gyant-net:
         ipv4_address: 174.18.0.102
-    command: sh -c "npm run start:debug"
+    command: sh -c "cp .env.test.example .env.test && cp .env.development.example .env.development && npm run start:debug"
 
 volumes:
   gyantdata:
